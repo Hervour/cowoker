@@ -25,7 +25,7 @@ QQ 官方机器人 ─┐
 - 每个私聊/群聊绑定独立 Codex thread，并在下一轮继续上下文。
 - 会话、thread 后端和运行状态持久化到 `data/sessions.json`。
 - `sdk` 后端使用官方 `@openai/codex-sdk`，默认只读、无交互审批。
-- `app-server` 后端支持聊天内审批：`/approve`、`/deny`，以及 `acceptForSession`。
+- `app-server` 后端默认使用独立 AI 审查代理 `auto_review` 审批沙箱边界请求，并保留 `/approve`、`/deny` 作为人工回退。
 - 每个会话任务串行执行，超过全局并发上限时进入队列。
 - 可配置计划、命令和文件修改进度回传。
 - Webhook 事件幂等，平台重复推送不会重复触发 Codex。
@@ -53,10 +53,10 @@ QQ 官方机器人 ─┐
 
 - 通过 `codex app-server --listen stdio://` 提供 JSON-RPC；
 - 支持命令执行、文件修改和权限扩展审批；
-- 聊天收到审批编号后，用户回复：
-  - `/approve <编号> once`
-  - `/approve <编号> session`
-  - `/deny <编号>`
+- `codex.approvalsReviewer = "auto_review"` 时，Codex 会把“原本需要人工审批”的沙箱边界请求交给独立审查代理；
+- AI 审查代理只决定是否放行，不会扩大 `writable_roots`、开启网络或取消沙箱；
+- `/approve <编号> once|session` 和 `/deny <编号>` 保留为人工回退；
+- `auto_review` 需要交互式审批策略，例如 `approvalPolicy = "on-request"`；`approvalPolicy = "never"` 时没有请求可审查；
 - app-server 仍属于 Codex 的实验性接口，生产部署应固定 Codex 版本并做回归测试。
 
 ## 快速开始

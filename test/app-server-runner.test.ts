@@ -23,6 +23,7 @@ test("app-server runner handles approval requests and completes a turn", async (
     },
     mode: "workspace-write",
     prompt: "run the fake turn",
+    approvalsReviewer: "auto_review",
     signal: controller.signal,
     onThreadId: () => undefined,
     onProgress: (event) => progress.push(event),
@@ -34,6 +35,6 @@ test("app-server runner handles approval requests and completes a turn", async (
 
   assert.equal(approved, true);
   assert.equal(result.threadId, "thr_fake");
-  assert.equal(result.finalResponse, "fake response:accept");
+  assert.equal(result.finalResponse, "fake response:accept:auto_review");
   assert.equal(progress.some((event) => event.kind === "command"), true);
 });

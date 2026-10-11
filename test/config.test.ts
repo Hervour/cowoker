@@ -16,7 +16,7 @@ test("config expands environment variables and resolves project paths", async ()
         allowedChats: { dev: ["${DEV_CHAT:-dev}"] },
         admins: { dev: ["${DEV_USER}"] },
       },
-      codex: {},
+      codex: { approvalsReviewer: "auto_review" },
       projects: [{ alias: "cowoker", path: "${PROJECT_PATH}" }],
       defaultProject: "cowoker",
       sessionStorePath: path.join(directory, "sessions.json"),
@@ -29,9 +29,9 @@ test("config expands environment variables and resolves project paths", async ()
     } as NodeJS.ProcessEnv);
     assert.equal(config.authorization.allowedUsers.dev?.[0], "alice");
     assert.equal(config.projects[0]?.path, directory);
+    assert.equal(config.codex.approvalsReviewer, "auto_review");
     assert.equal(config.connectors.dev.enabled, true);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 });
-

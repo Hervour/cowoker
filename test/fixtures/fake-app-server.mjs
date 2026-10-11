@@ -3,6 +3,7 @@ import readline from "node:readline";
 const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
 let threadId = "thr_fake";
 let turnId = "turn_fake";
+let approvalsReviewer = "user";
 
 function send(message) {
   process.stdout.write(`${JSON.stringify(message)}\n`);
@@ -16,10 +17,12 @@ rl.on("line", (line) => {
     return;
   }
   if (message.method === "thread/start") {
+    approvalsReviewer = message.params.approvalsReviewer;
     send({ id: message.id, result: { thread: { id: threadId } } });
     return;
   }
   if (message.method === "thread/resume") {
+    approvalsReviewer = message.params.approvalsReviewer;
     threadId = message.params.threadId;
     send({ id: message.id, result: { thread: { id: threadId } } });
     return;
@@ -47,7 +50,7 @@ rl.on("line", (line) => {
   }
   if (message.id === 900 && message.result) {
     const decision = message.result.decision;
-    send({ method: "item/completed", params: { threadId, turnId, completedAtMs: Date.now(), item: { id: "msg_fake", type: "agentMessage", text: `fake response:${decision}` } } });
+    send({ method: "item/completed", params: { threadId, turnId, completedAtMs: Date.now(), item: { id: "msg_fake", type: "agentMessage", text: `fake response:${decision}:${approvalsReviewer}` } } });
     send({ method: "turn/completed", params: { threadId, turn: { id: turnId, status: "completed", items: [], error: null } } });
     return;
   }

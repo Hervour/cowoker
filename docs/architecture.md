@@ -72,7 +72,7 @@ The app-server backend starts `codex app-server --listen stdio://` and speaks JS
 - `item/permissions/requestApproval`;
 - item, plan, diff and completion events.
 
-Remote approval decisions are scoped to one conversation and expire after `approvalTimeoutMs`.
+When `codex.approvalsReviewer = "auto_review"`, the app-server routes eligible sandbox-boundary approval requests to a separate reviewer agent. The reviewer only decides whether to allow the requested escalation; it does not expand the sandbox or grant new permissions. Manual `/approve` and `/deny` remain the fallback path and expire after `approvalTimeoutMs`.
 
 ### Progress
 

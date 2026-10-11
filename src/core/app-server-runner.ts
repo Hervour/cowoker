@@ -255,6 +255,9 @@ export class AppServerRunner implements CodexExecutor {
 
   async run(input: CodexRunInput): Promise<CodexRunResult> {
     if (input.signal.aborted) throw input.signal.reason ?? new Error("Run cancelled");
+    if (input.approvalsReviewer === "auto_review" && input.project.approvalPolicy === "never") {
+      throw new Error("approvalsReviewer=auto_review requires an interactive approvalPolicy; use on-request or untrusted");
+    }
     const connection = new AppServerConnection(this.command);
     let turnId: string | undefined;
     let threadId: string | undefined;
@@ -364,7 +367,7 @@ export class AppServerRunner implements CodexExecutor {
       const common = {
         cwd: input.project.path,
         approvalPolicy: input.project.approvalPolicy,
-        approvalsReviewer: "user",
+        approvalsReviewer: input.approvalsReviewer,
         sandbox: input.mode,
         ...(input.project.model ? { model: input.project.model } : {}),
         serviceName: "cowoker",
@@ -382,7 +385,7 @@ export class AppServerRunner implements CodexExecutor {
         input: [{ type: "text", text: input.prompt, text_elements: [] }],
         cwd: input.project.path,
         approvalPolicy: input.project.approvalPolicy,
-        approvalsReviewer: "user",
+        approvalsReviewer: input.approvalsReviewer,
         sandboxPolicy: sandboxFor(input.project, input.mode),
         ...(input.project.model ? { model: input.project.model } : {}),
         ...(input.project.reasoningEffort ? { effort: input.project.reasoningEffort } : {}),

@@ -34,6 +34,7 @@ const ConfigSchema = z.object({
     maxPromptChars: z.number().int().min(100).max(100_000).default(20_000),
     maxReplyChars: z.number().int().min(500).max(20_000).default(4_000),
     approvalTimeoutMs: z.number().int().min(30_000).max(24 * 60 * 60 * 1000).default(5 * 60 * 1000),
+    approvalsReviewer: z.enum(["user", "auto_review"]).default("user"),
     progress: z.object({
       enabled: z.boolean().default(false),
       minIntervalMs: z.number().int().min(1_000).max(5 * 60 * 1000).default(15_000),

@@ -22,6 +22,7 @@ export interface CodexRunInput {
   project: ProjectConfig;
   mode: RunMode;
   prompt: string;
+  approvalsReviewer: "user" | "auto_review";
   threadId?: string;
   signal: AbortSignal;
   onThreadId: (threadId: string) => void;

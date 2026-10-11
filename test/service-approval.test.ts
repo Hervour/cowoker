@@ -31,6 +31,7 @@ test("service routes a remote approval command into the app-server executor", as
       },
       codex: {
         defaultMode: "read-only",
+        approvalsReviewer: "auto_review",
         progress: { enabled: true, minIntervalMs: 1000, maxMessagesPerRun: 4 },
       },
       projects: [{
@@ -50,8 +51,10 @@ test("service routes a remote approval command into the app-server executor", as
     const sessions = new SessionStore(path.join(directory, "sessions.json"));
     await sessions.load();
     const replies: string[] = [];
+    let requestedReviewer: string | undefined = undefined;
     const runner: CodexExecutor = {
       async run(input) {
+        requestedReviewer = input.approvalsReviewer;
         input.onThreadId("thread-service-test");
         input.onProgress?.({ kind: "plan", text: "run tests" });
         const decision = await input.onApproval?.({
@@ -91,6 +94,7 @@ test("service routes a remote approval command into the app-server executor", as
     await waitFor(() => replies.some((reply) => reply.includes("decision=accept")));
     await service.flush();
     assert.equal(replies.some((reply) => reply.includes("⏳ 计划：run tests")), true);
+    assert.equal(requestedReviewer, "auto_review");
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

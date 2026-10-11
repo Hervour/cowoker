@@ -52,11 +52,11 @@ const helpText = [
   "/projects：列出项目",
   "/status：查看会话、队列和审批状态",
   "/cancel：取消当前任务并清空队列",
-  "/approve <编号> [once|session]：批准一次或本轮",
-  "/deny <编号>：拒绝审批",
+  "/approve <编号> [once|session]：人工审批或 AI 审批回退时批准",
+  "/deny <编号>：人工审批或 AI 审批回退时拒绝",
   "/whoami：查看身份",
   "",
-  "安全边界：远程任务始终受 Codex 沙箱约束；sdk 后端不支持交互审批，app-server 后端支持。",
+  "安全边界：远程任务始终受 Codex 沙箱约束；app-server 可交给独立 AI 审查代理审批。",
 ].join("\n");
 
 function truncate(text: string, maxLength: number): string {
@@ -78,10 +78,14 @@ function replyChunks(text: string, maxChunk = 1_500): string[] {
   return chunks;
 }
 
-function describeProject(project: ProjectConfig): string {
+function describeProject(project: ProjectConfig, approvalsReviewer: "user" | "auto_review"): string {
   const flags = [
     project.executionBackend,
-    project.approvalPolicy === "never" ? "无审批" : `审批:${project.approvalPolicy}`,
+    project.approvalPolicy === "never"
+      ? "无审批"
+      : approvalsReviewer === "auto_review"
+        ? `AI审批:${project.approvalPolicy}`
+        : `人工审批:${project.approvalPolicy}`,
     project.networkAccess ? "网络开" : "网络关",
     `搜索:${project.webSearch}`,
   ];
@@ -338,6 +342,7 @@ export class CoworkerService {
         project,
         mode,
         prompt: effectivePrompt,
+        approvalsReviewer: this.config.codex.approvalsReviewer,
         ...(threadId ? { threadId } : {}),
         signal: active.controller.signal,
         onThreadId: (newThreadId) => {
@@ -546,7 +551,7 @@ export class CoworkerService {
     const current = this.session(message).projectAlias;
     return [
       "可用项目：",
-      ...this.config.projects.map((project) => `${project.alias === current ? "*" : " "} ${describeProject(project)}`),
+      ...this.config.projects.map((project) => `${project.alias === current ? "*" : " "} ${describeProject(project, this.config.codex.approvalsReviewer)}`),
     ].join("\n");
   }
 

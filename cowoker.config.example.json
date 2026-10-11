@@ -72,6 +72,7 @@
     "maxPromptChars": 20000,
     "maxReplyChars": 4000,
     "approvalTimeoutMs": 300000,
+    "approvalsReviewer": "auto_review",
     "progress": {
       "enabled": true,
       "minIntervalMs": 15000,
