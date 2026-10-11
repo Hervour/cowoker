@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.test-dist/
+.app-server-types/
+.env
+cowoker.config.json
+data/*.json
+data/*.jsonl
+!data/.gitkeep
+
+.cowoker-inbox/
+
+
+data/*.log
+

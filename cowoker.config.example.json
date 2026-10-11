@@ -1,0 +1,138 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8787,
+    "maxBodyBytes": 1048576
+  },
+  "authorization": {
+    "allowedUsers": {
+      "dev": [
+        "dev-user"
+      ],
+      "wecom": [
+        "YOUR_WECOM_USER_ID"
+      ],
+      "qq": [
+        "YOUR_QQ_USER_OPENID"
+      ],
+      "wechat-mp": [
+        "YOUR_WECHAT_MP_OPENID"
+      ],
+      "web": [
+        "web-user"
+      ]
+    },
+    "allowedChats": {
+      "dev": [
+        "dev-user"
+      ],
+      "wecom": [
+        "YOUR_WECOM_USER_ID"
+      ],
+      "qq": [
+        "YOUR_QQ_USER_OPENID",
+        "YOUR_QQ_GROUP_OPENID"
+      ],
+      "wechat-mp": [
+        "YOUR_WECHAT_MP_OPENID"
+      ],
+      "web": [
+        "web-user"
+      ]
+    },
+    "admins": {
+      "dev": [
+        "dev-user"
+      ],
+      "wecom": [
+        "YOUR_WECOM_USER_ID"
+      ],
+      "qq": [
+        "YOUR_QQ_USER_OPENID"
+      ],
+      "wechat-mp": [
+        "YOUR_WECHAT_MP_OPENID"
+      ],
+      "web": [
+        "web-user"
+      ]
+    },
+    "operators": {
+      "wecom": [],
+      "qq": [],
+      "wechat-mp": [],
+      "web": [],
+      "dev": []
+    }
+  },
+  "codex": {
+    "defaultMode": "read-only",
+    "runTimeoutMs": 1800000,
+    "maxConcurrentRuns": 2,
+    "maxPromptChars": 20000,
+    "maxReplyChars": 4000,
+    "approvalTimeoutMs": 300000,
+    "progress": {
+      "enabled": true,
+      "minIntervalMs": 15000,
+      "maxMessagesPerRun": 8
+    }
+  },
+  "projects": [
+    {
+      "alias": "cowoker",
+      "path": "${COWOKER_PROJECT_PATH:-.}",
+      "networkAccess": false,
+      "webSearch": "disabled",
+      "executionBackend": "app-server",
+      "approvalPolicy": "on-request"
+    }
+  ],
+  "defaultProject": "cowoker",
+  "sessionStorePath": "data/sessions.json",
+  "runLogPath": "data/runs.jsonl",
+  "eventStorePath": "data/events.json",
+  "connectors": {
+    "dev": {
+      "enabled": true,
+      "token": "${COWOKER_DEV_TOKEN:-dev-token}"
+    },
+    "wecom": {
+      "enabled": false,
+      "corpId": "${WECOM_CORP_ID:-}",
+      "agentId": 1000002,
+      "secret": "${WECOM_APP_SECRET:-}",
+      "token": "${WECOM_CALLBACK_TOKEN:-}",
+      "encodingAesKey": "${WECOM_ENCODING_AES_KEY:-}"
+    },
+    "qq": {
+      "enabled": false,
+      "appId": "${QQ_BOT_APP_ID:-}",
+      "appSecret": "${QQ_BOT_APP_SECRET:-}",
+      "enforceSignature": true,
+      "mode": "gateway"
+    },
+    "wechatMp": {
+      "enabled": false,
+      "appId": "${WECHAT_MP_APP_ID:-}",
+      "appSecret": "${WECHAT_MP_APP_SECRET:-}",
+      "token": "${WECHAT_MP_TOKEN:-}",
+      "encodingAesKey": "${WECHAT_MP_ENCODING_AES_KEY:-}"
+    },
+    "web": {
+      "enabled": true,
+      "token": "${COWOKER_WEB_TOKEN:-}"
+    }
+  },
+  "attachments": {
+    "enabled": true,
+    "maxInboundBytes": 52428800,
+    "maxOutboundBytes": 209715200,
+    "maxFilesPerMessage": 5,
+    "allowedHosts": [
+      "qq.com",
+      "qq.com.cn"
+    ],
+    "intakeDirName": ".cowoker-inbox"
+  }
+}
